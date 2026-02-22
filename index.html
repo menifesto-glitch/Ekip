@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>HayatQR | Acil Durum Kimliği</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --yesil:#2ecc71;
+  --mavi:#3498db;
+  --arka:#eefaf5;
+  --kart:#ffffff;
+  --yazi:#2c3e50;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI", Arial, sans-serif;
+}
+
+body{
+  margin:0;
+  background:var(--arka);
+  color:var(--yazi);
+}
+
+header{
+  background:linear-gradient(135deg,var(--yesil),var(--mavi));
+  color:white;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.menu-btn{
+  font-size:26px;
+  cursor:pointer;
+}
+
+.menu{
+  position:fixed;
+  top:0;
+  right:-260px;
+  width:260px;
+  height:100%;
+  background:white;
+  padding:20px;
+  box-shadow:-5px 0 20px rgba(0,0,0,0.15);
+  transition:0.3s;
+}
+
+.menu.active{
+  right:0;
+}
+
+.container{
+  max-width:600px;
+  margin:30px auto;
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.1);
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:600;
+}
+
+input{
+  width:100%;
+  padding:11px;
+  margin-top:6px;
+  border-radius:12px;
+  border:1px solid #ccc;
+}
+
+button{
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:var(--yesil);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
+
+#qrcode{
+  margin-top:25px;
+  text-align:center;
+}
+
+#qrcode img{
+  border:6px solid #ecf9f1;
+  border-radius:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <b>HayatQR | Acil Kimlik</b>
+  <span class="menu-btn" onclick="menuAc()">☰</span>
+</header>
+
+<div class="menu" id="menu">
+  <h3>👨‍💻 Yapımcı</h3>
+  <p>Alperen Ünal</p>
+  <h3>⚙️ Geliştirici</h3>
+  <p>İsmini Buraya Yaz</p>
+</div>
+
+<div class="container">
+  <label>Ad Soyad</label>
+  <input id="ad">
+
+  <label>Doğum Tarihi</label>
+  <input id="dogum" type="date">
+
+  <label>Kan Grubu</label>
+  <input id="kan">
+
+  <label>Adres</label>
+  <input id="adres">
+
+  <label>Acil Durumda Aranacak Numara</label>
+  <input id="acil" placeholder="05xx xxx xx xx">
+
+  <button onclick="qrUret()">QR Kodu Oluştur</button>
+  <div id="qrcode"></div>
+</div>
+
+<script>
+function menuAc(){
+  document.getElementById("menu").classList.toggle("active");
+}
+
+function qrUret(){
+  const ad = document.getElementById("ad").value;
+  const dogumRaw = document.getElementById("dogum").value;
+  const kan = document.getElementById("kan").value;
+  const adres = document.getElementById("adres").value;
+  const acil = document.getElementById("acil").value.replace(/\s+/g,"");
+
+  if(!ad || !dogumRaw || !kan || !adres || !acil){
+    alert("Lütfen tüm alanları doldurun");
+    return;
+  }
+
+  const parts = dogumRaw.split("-");
+  const dogum = `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+  const veri =
+`HAYATQR – ACİL DURUM KİMLİĞİ
+
+👤 Ad Soyad: ${ad}
+🎂 Doğum Tarihi: ${dogum}
+🩸 Kan Grubu: ${kan}
+📍 Adres: ${adres}
+
+📞 Acil Arama:
+tel:${acil}`;
+
+  const qrURL =
+    "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
+    encodeURIComponent(veri);
+
+  document.getElementById("qrcode").innerHTML =
+    `<img src="${qrURL}" alt="QR Kod">`;
+}
+</script>
+
+</body>
+</html>
